@@ -5,7 +5,7 @@ from django.core.validators import MinValueValidator,MaxValueValidator
 
 # Create your models here.
 class Cakes(models.Model):
-    name=models.CharField(max_length=25)
+    name=models.CharField(max_length=25,unique=True)
     shape_choices=(
         ("circle","circle"),
         ("rectangle","rectangle"),
@@ -27,6 +27,11 @@ class Cakes(models.Model):
     def __str__(self):
         return self.name
     
+    @property
+    def cake_review(self):
+        return Review.objects.filter(name=self)
+    
+  
 class Carts(models.Model):
     name=models.ForeignKey(Cakes,on_delete=models.CASCADE)
     user=models.ForeignKey(User,on_delete=models.CASCADE)
@@ -36,7 +41,7 @@ class Carts(models.Model):
         ("order-placed","order-placed"),
         ("cancelled","cancelled")
     )
-    status=models.CharField(max_length=200,choices=options)
+    status=models.CharField(max_length=200,choices=options,default="in-cart")
     quantity=models.PositiveIntegerField(default=1)
 
 class Order(models.Model):
@@ -55,7 +60,8 @@ class Order(models.Model):
     currentDate=datetime.date.today()
     expectedDate=currentDate+datetime.timedelta(days=5)
     expected_Delivery_Date=models.DateField(default=expectedDate)
-    address=models.CharField(max_length=200,null=True)
+    address=models.CharField(max_length=200)
+    
 
 class Review(models.Model):
     name=models.ForeignKey(Cakes,on_delete=models.CASCADE)

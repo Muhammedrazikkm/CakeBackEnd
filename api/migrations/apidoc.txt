@@ -1,0 +1,3 @@
+api for register an account
+    url=localhost:8000/api/register
+    method=get
